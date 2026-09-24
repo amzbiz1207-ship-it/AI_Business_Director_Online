@@ -74,13 +74,19 @@ def clean_filename(name):
 
 def register_pdf_font():
     font_candidates = [
-        "/System/Library/Fonts/Supplemental/Arial.ttf",
-        "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
-        "/System/Library/Fonts/Supplemental/Times New Roman.ttf",
-        "/Library/Fonts/Arial.ttf",
-        "/Library/Fonts/Arial Unicode.ttf",
+   def register_pdf_font():
+    """
+    Регистрирует шрифт с поддержкой русского языка для PDF.
+    Если шрифта нет на сервере Streamlit, приложение скачает его автоматически.
+    """
+
+    font_candidates = [
+        "fonts/NotoSans-Regular.ttf",
+        "fonts/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/local/share/fonts/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/Library/Fonts/Arial.ttf",
     ]
 
     for font_path in font_candidates:
@@ -91,7 +97,20 @@ def register_pdf_font():
             except Exception:
                 pass
 
-    return "Helvetica"
+    try:
+        import urllib.request
+
+        font_url = "https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf"
+        downloaded_font_path = "/tmp/NotoSans-Regular.ttf"
+
+        if not Path(downloaded_font_path).exists():
+            urllib.request.urlretrieve(font_url, downloaded_font_path)
+
+        pdfmetrics.registerFont(TTFont("AppFont", downloaded_font_path))
+        return "AppFont"
+
+    except Exception:
+        return "Helvetica"
 
 
 def markdown_to_pdf_bytes(markdown_text, title="Пакет продвижения", service_name="AI Business Director"):
