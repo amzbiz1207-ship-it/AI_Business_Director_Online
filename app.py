@@ -73,45 +73,32 @@ def clean_filename(name):
 
 
 def register_pdf_font():
-    font_candidates = [
-   def register_pdf_font():
-    """
-    Регистрирует шрифт с поддержкой русского языка для PDF.
-    Если шрифта нет на сервере Streamlit, приложение скачает его автоматически.
-    """
-
-    font_candidates = [
-        "fonts/NotoSans-Regular.ttf",
-        "fonts/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-        "/System/Library/Fonts/Supplemental/Arial.ttf",
-        "/Library/Fonts/Arial.ttf",
-    ]
-
-    for font_path in font_candidates:
-        if Path(font_path).exists():
-            try:
-                pdfmetrics.registerFont(TTFont("AppFont", font_path))
-                return "AppFont"
-            except Exception:
-                pass
-
     try:
         import urllib.request
 
         font_url = "https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf"
-        downloaded_font_path = "/tmp/NotoSans-Regular.ttf"
+        font_path = "/tmp/NotoSans-Regular.ttf"
 
-        if not Path(downloaded_font_path).exists():
-            urllib.request.urlretrieve(font_url, downloaded_font_path)
+        if not Path(font_path).exists():
+            urllib.request.urlretrieve(font_url, font_path)
 
-        pdfmetrics.registerFont(TTFont("AppFont", downloaded_font_path))
+        pdfmetrics.registerFont(TTFont("AppFont", font_path))
         return "AppFont"
 
     except Exception:
-        return "Helvetica"
+        pass
 
+    try:
+        local_font = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+
+        if Path(local_font).exists():
+            pdfmetrics.registerFont(TTFont("AppFont", local_font))
+            return "AppFont"
+
+    except Exception:
+        pass
+
+    return "Helvetica"
 
 def markdown_to_pdf_bytes(markdown_text, title="Пакет продвижения", service_name="AI Business Director"):
     """
