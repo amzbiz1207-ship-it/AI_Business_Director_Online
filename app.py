@@ -882,86 +882,113 @@ with st.form("business_form"):
         ["Русский", "English"],
         index=0,
     )
+    labels = {
+        "business_name": "Business name" if output_language == "English" else "Название бизнеса",
+        "business_name_ph": "Example: beauty salon, coffee shop, or toy store" if output_language == "English" else "Например: салон красоты, кофейня или магазин игрушек",
+        "business_type": "Business type / niche" if output_language == "English" else "Тип бизнеса / ниша",
+        "business_type_ph": "Example: handmade plush toys" if output_language == "English" else "Например: изготовление мягких игрушек ручной работы",
+        "location": "City / location / work format" if output_language == "English" else "Город / локация / формат работы",
+        "location_ph": "Example: online, Instagram, Etsy, Moscow" if output_language == "English" else "Например: онлайн, Instagram, Etsy, Москва",
+        "products": "What do you sell?" if output_language == "English" else "Что продаёте",
+        "products_ph": "Example: plush toys, keychains, gift sets, custom orders" if output_language == "English" else "Например: мягкие игрушки, брелоки, подарочные наборы, индивидуальные заказы",
+        "audience": "Who is this business for?" if output_language == "English" else "Для кого этот бизнес",
+        "audience_ph": "Example: parents of children aged 3–7, gift buyers, collectors" if output_language == "English" else "Например: родители детей 3–7 лет, покупатели подарков, коллекционеры",
+        "goal": "Main promotion goal" if output_language == "English" else "Главная цель продвижения",
+        "goal_ph": "Example: get more orders through Instagram" if output_language == "English" else "Например: больше заказов через Instagram", 
+        "channels": "Promotion channels" if output_language == "English" else "Каналы продвижения",
+        "channels_ph": "Example: Instagram, short videos, stories, TikTok, Telegram" if output_language == "English" else "Например: Instagram, короткие видео, сторис, TikTok, Telegram",
+        "advantages": "Features / advantages" if output_language == "English" else "Особенности / преимущества",
+        "advantages_ph": "Example: handmade, unique design, fast shipping, beautiful packaging" if output_language == "English" else "Например: ручная работа, уникальный дизайн, быстрая отправка, красивая упаковка",
+        "offer": "Promotion / offer, if any" if output_language == "English" else "Акция / оффер, если есть",
+        "offer_ph": "Example: buy two toys and get the second one 50% off" if output_language == "English" else "Например: при покупке двух игрушек вторая со скидкой 50%",
+        "tone": "Tone of communication" if output_language == "English" else "Тон коммуникации",
+        "tone_warm": "Warm and friendly" if output_language == "English" else "Тёплый и дружелюбный",
+        "tone_expert": "Expert" if output_language == "English" else "Экспертный",
+        "tone_premium": "Premium" if output_language == "English" else "Премиальный",
+        "tone_light": "Light and emotional" if output_language == "English" else "Лёгкий и эмоциональный",
+        "extra": "Additional information" if output_language == "English" else "Дополнительная информация",
+        "extra_ph": "Any details: prices, timelines, competitors, preferences, what you have already tried..." if output_language == "English" else "Любые детали: цены, сроки, конкуренты, пожелания, что уже пробовали...",
+        "submit_button": "🚀 Create an AI promotion package" if output_language == "English" else "🚀 Создать пакет продвижения через ИИ",
+        "err_required": "Please fill in at least: business type and what you sell." if output_language == "English" else "Заполните минимум: тип бизнеса и что продаёте.",
+        "err_api_key": "GOOGLE_API_KEY was not found. For local launch, check the .env file; for the online version, check Streamlit Secrets." if output_language == "English" else "GOOGLE_API_KEY не найден. Для локального запуска проверьте файл .env, для онлайн-версии — Streamlit Secrets.",
+    }
+               
     col1, col2 = st.columns(2)
 
     with col1:
         business_name = st.text_input(
-            "Название бизнеса",
-            placeholder="Например: салон красоты, кофейня или магазин игрушек"
+            labels["business_name"],
+            placeholder=labels["business_name_ph"]
         )
 
         business_type = st.text_input(
-            "Тип бизнеса / ниша",
-            placeholder="Например: изготовление мягких игрушек ручной работы"
+            labels["business_type"],
+            placeholder=labels["business_type_ph"]
         )
 
         location = st.text_input(
-            "Город / локация / формат работы",
-            placeholder="Например: онлайн, Instagram, Etsy, Москва"
+            labels["location"],
+           placeholder=labels["location_ph"]
         )
 
         products = st.text_area(
-            "Что продаёте",
-            placeholder="Например: мягкие игрушки, брелоки, подарочные наборы, индивидуальные заказы",
+            labels["products"],
+            placeholder=labels["products_ph"],
             height=120,
         )
 
         audience = st.text_area(
-            "Для кого этот бизнес",
-            placeholder="Например: мамы, бабушки, женщины 20–45, люди, которые ищут необычный подарок",
+            labels["audience"],
+            placeholder=labels["audience_ph"],
             height=120,
         )
 
     with col2:
         goal = st.text_area(
-            "Главная цель продвижения",
-            placeholder="Например: больше заказов через Instagram",
+            labels["goal"],
+            placeholder=labels["goal_ph"],
             height=100,
         )
 
         channels = st.text_input(
-            "Каналы продвижения",
-            placeholder="Например: Instagram, короткие видео, сторис, TikTok, Telegram"
+            labels["channels"],
+            placeholder=labels["channels_ph"]
         )
 
         advantages = st.text_area(
-            "Особенности / преимущества",
-            placeholder="Например: ручная работа, уникальный дизайн, быстрая отправка, красивая упаковка",
+            labels["advantages"],
+            placeholder=labels["advantages_ph"],
             height=100,
         )
 
         offer = st.text_area(
-            "Акция / оффер, если есть",
-            placeholder="Например: при покупке двух игрушек вторая со скидкой 50%",
+            labels["offer"],
+            placeholder=labels["offer_ph"],
             height=90,
         )
 
         tone = st.selectbox(
-            "Тон коммуникации",
+           labels["tone"],
             [
-                "Тёплый и дружелюбный",
-                "Экспертный",
-                "Премиальный",
-                "Лёгкий и эмоциональный",
-                "Спокойный и доверительный",
-                "Смелый и продающий",
+               labels["tone_warm"],
+               labels["tone_expert"],
+               labels["tone_premium"],
+               labels["tone_light"],
             ],
         )
 
     extra = st.text_area(
-        "Дополнительная информация",
-        placeholder="Любые детали: цены, сроки, конкуренты, пожелания, что уже пробовали...",
+        labels["extra"],
+        placeholder=labels["extra_ph"],
         height=100,
     )
 
-    submitted = st.form_submit_button("🚀 Создать пакет продвижения через ИИ")
-
-
+   submitted = st.form_submit_button(labels["submit_button"])
 if submitted:
     if not business_type.strip() or not products.strip():
-        st.error("Заполните минимум: тип бизнеса и что продаёте.")
+        st.error(labels["err_required"])
     elif not api_key:
-        st.error("GOOGLE_API_KEY не найден. Для локального запуска проверьте файл .env, для онлайн-версии — Streamlit Secrets.")
+        st.error(labels["err_api_key"])
     else:
         data = {
             "business_name": business_name.strip() or "Без названия",
