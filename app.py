@@ -651,7 +651,164 @@ def generate_business_package(data):
 
     return result, model_name
 
+_generate_business_package_ru = generate_business_package
 
+
+def generate_business_package(data):
+    output_language = data.get("output_language", "Русский")
+
+    if output_language != "English":
+        return _generate_business_package_ru(data)
+
+    api_key = load_env_key()
+    if not api_key:
+        raise RuntimeError("GOOGLE_API_KEY не найден")
+
+    model_name = load_working_model()
+
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel(model_name)
+
+    prompt = f"""
+You are a professional English-speaking marketing strategist, business growth advisor,
+content director, and offer packaging specialist.
+
+YOUR TASK:
+Create a detailed, practical, ready-to-use business promotion package for the specific business.
+
+STRICT LANGUAGE RULES:
+- Write ONLY in English.
+- Do not use Russian headings.
+- Do not include Russian text.
+- Do not include internal reasoning.
+- Do not explain how you think.
+- Do not add a translation.
+- All sections, tables, message templates, and recommendations must be in English.
+- Be specific to the client's niche.
+- Avoid generic phrases.
+- Give ready-to-use wording.
+
+BUSINESS DATA:
+
+Business name:
+{data['business_name']}
+
+Business type / niche:
+{data['business_type']}
+
+Location / format:
+{data['location']}
+
+Products or services:
+{data['products']}
+
+Target audience:
+{data['audience']}
+
+Main promotion goal:
+{data['goal']}
+
+Promotion channels:
+{data['channels']}
+
+Strengths / advantages:
+{data['advantages']}
+
+Offer / promotion:
+{data['offer']}
+
+Tone of voice:
+{data['tone']}
+
+Additional information:
+{data['extra']}
+
+CREATE THE RESPONSE STRICTLY IN THIS FORMAT:
+
+# Business promotion package for "{data['business_name']}"
+
+## 1. Brief positioning
+Describe how the business should sound to customers: who we are, who we help, and what problem we solve.
+
+## 2. Target audience
+Divide the audience into 3–5 segments. For each segment write:
+- who they are;
+- what matters to them;
+- their pain points;
+- what to offer them.
+
+## 3. Main customer pain points, desires, and objections
+Create lists:
+- pain points;
+- fears;
+- desires;
+- objections.
+
+## 4. Strong offers
+Give 7–10 ready-to-use offers for this business.
+
+## 5. Short video ideas
+Give 15 ideas. For each idea write:
+- topic;
+- short script;
+- opening hook.
+
+## 6. Stories ideas
+Give 15 ideas for stories:
+- warming up;
+- trust building;
+- sales;
+- reviews;
+- behind the scenes;
+- Q&A.
+
+## 7. Post ideas
+Give 10 post topics with short descriptions.
+
+## 8. Ready-to-use client message templates
+Create templates:
+- first message;
+- reply to a price question;
+- reply to hesitation;
+- invitation to buy or book;
+- message after purchase or service;
+- request for a review.
+
+## 9. 7-day content plan
+Create a table:
+Day | Short video | Stories | Post or action | Goal
+
+## 10. Mini sales funnel
+Describe the customer journey:
+saw content → became interested → sent a message → received an offer → bought or booked.
+
+## 11. What to improve in business packaging
+Give recommendations for:
+- profile bio;
+- pinned stories/highlights;
+- visuals;
+- service description;
+- reviews;
+- call to action.
+
+## 12. 7-day action plan
+Give a simple day-by-day checklist.
+
+Response format: Markdown.
+Write only the final result.
+"""
+
+    response = model.generate_content(
+        prompt,
+        generation_config={
+            "temperature": 0.6,
+            "max_output_tokens": 8192,
+        },
+    )
+
+    result = response.text.strip()
+
+    return result, model_name
 st.set_page_config(
     page_title=APP_TITLE,
     page_icon="🤖",
@@ -720,7 +877,11 @@ with st.form("business_form"):
     )
 
     st.caption("Это название появится в PDF в строке «Подготовлено с помощью ...».")
-
+    output_language = st.selectbox(
+        "Язык результата / Output language",
+        ["Русский", "English"],
+        index=0,
+    )
     col1, col2 = st.columns(2)
 
     with col1:
@@ -815,6 +976,7 @@ if submitted:
             "tone": tone.strip(),
             "extra": extra.strip() or "Не указано",
             "service_name": service_name.strip() or "AI Business Director",
+            "output_language": output_language,
         }
 
         with st.spinner("ИИ анализирует бизнес и создаёт пакет продвижения..."):
