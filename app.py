@@ -982,8 +982,8 @@ with st.form("business_form"):
         placeholder=labels["extra_ph"],
         height=100,
     )
-
-   submitted = st.form_submit_button(labels["submit_button"])
+         
+    submitted = st.form_submit_button(labels["submit_button"])
 if submitted:
     if not business_type.strip() or not products.strip():
         st.error(labels["err_required"])
