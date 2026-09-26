@@ -1088,13 +1088,24 @@ if submitted:
 
 st.divider()
 
-with st.expander("Как пользоваться"):
-    st.markdown(
-        """
+with st.expander("How to use" if output_language == "English" else "Как пользоваться"):
+    if output_language == "English":
+        st.markdown(
+            """
+1. Enter the service name for the PDF or leave AI Business Director.
+2. Fill in the business questionnaire.
+3. Click **Create promotion package with AI**.
+4. Review the result.
+5. Download PDF, Markdown, or TXT.
+"""
+        )
+    else:
+        st.markdown(
+            """
 1. Введите название сервиса для PDF или оставьте AI Business Director.
 2. Заполните анкету бизнеса.
 3. Нажмите **«Создать пакет продвижения через ИИ»**.
 4. Проверьте результат.
 5. Скачайте PDF, Markdown или TXT.
 """
-    )
+        )
