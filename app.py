@@ -373,9 +373,19 @@ def clean_ai_output(text):
         text = text[idx:].lstrip()
 
     # Если заголовок есть без решётки
-    marker2 = "Пакет продвижения для бизнеса"
+    marker2_ru = "Пакет продвижения для бизнеса"
+    marker2_en = f'Business promotion package for "{business_name}"'
+    marker2 = marker2_en if output_language == "English" else marker2_ru
     idx2 = text.find(marker2)
+
+    if idx2 == -1:
+        idx2 = text.find(marker2_en)
+
+    if idx2 == -1:
+        idx2 = text.find(marker2_ru)
+
     if idx2 > 0 and idx2 < 1500:
+        
         text = "# " + text[idx2:].lstrip()
 
     replacements = {
