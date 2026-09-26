@@ -181,8 +181,11 @@ def markdown_to_pdf_bytes(markdown_text, title="Пакет продвижени�
 
     # Титульный блок
     story.append(Paragraph(html.escape(title), h1))
-    story.append(Paragraph(f"Создано: {created}", small))
-    story.append(Paragraph(f"Подготовлено с помощью {html.escape(service_name)}", small))
+    created_label = "Created" if title.startswith("Business promotion package") else "Создано"
+    prepared_label = "Prepared with" if title.startswith("Business promotion package") else "Подготовлено с помощью"
+
+    story.append(Paragraph(f"{created_label}: {created}", small))
+    story.append(Paragraph(f"{prepared_label} {html.escape(service_name)}", small))
     story.append(Spacer(1, 10))
 
     def _norm_pdf_heading(value):
@@ -310,7 +313,8 @@ def markdown_to_pdf_bytes(markdown_text, title="Пакет продвижени�
         canvas.setFillColor(colors.HexColor("#777777"))
 
         page_num = canvas.getPageNumber()
-        footer_text = f"{service_name} • страница {page_num}"
+        footer_label = "page" if title.startswith("Business promotion package") else "страница"
+        footer_text = f"{service_name} • {footer_label} {page_num}"
 
         canvas.drawString(16 * mm, 10 * mm, footer_text)
         canvas.restoreState()
@@ -1030,23 +1034,31 @@ if submitted:
                 now = datetime.now().strftime("%Y-%m-%d_%H-%M")
                 safe_name = clean_filename(data["business_name"])
 
-                filename_md = f"paket_prodvizheniya_{safe_name}_{now}.md"
-                filename_txt = f"paket_prodvizheniya_{safe_name}_{now}.txt"
-                filename_pdf = f"paket_prodvizheniya_{safe_name}_{now}.pdf"
-
+                is_english = output_language == "English"
+                filename_prefix = "business_promotion_package" if is_english else "paket_prodvizheniya"
+    
+                filename_md = f"{filename_prefix}_{safe_name}_{now}.md"
+                filename_txt = f"{filename_prefix}_{safe_name}_{now}.txt"
+                filename_pdf = f"{filename_prefix}_{safe_name}_{now}.pdf"
+    
+                pdf_title = (
+                    f'Business promotion package for "{data["business_name"]}"'
+                    if is_english
+                    else f"Пакет продвижения для бизнеса «{data['business_name']}»"
+                )
+    
                 pdf_bytes = markdown_to_pdf_bytes(
                     result,
-                    title=f"Пакет продвижения для бизнеса «{data['business_name']}»",
+                    title=pdf_title,
                     service_name=data["service_name"]
                 )
 
-                st.subheader("3. Скачать результат")
-
+                st.subheader("3. Download result" if output_language == "English" else "3. Скачать результат")
                 col_a, col_b, col_c = st.columns(3)
 
                 with col_a:
                     st.download_button(
-                        label="⬇️ Скачать PDF",
+                         label="⬇️ Download PDF" if output_language == "English" else "⬇️ Скачать PDF",
                         data=pdf_bytes,
                         file_name=filename_pdf,
                         mime="application/pdf",
@@ -1054,7 +1066,7 @@ if submitted:
 
                 with col_b:
                     st.download_button(
-                        label="⬇️ Скачать Markdown",
+                        label="⬇️ Download Markdown" if output_language == "English" else "⬇️ Скачать Markdown",
                         data=result.encode("utf-8"),
                         file_name=filename_md,
                         mime="text/markdown",
@@ -1062,7 +1074,7 @@ if submitted:
 
                 with col_c:
                     st.download_button(
-                        label="⬇️ Скачать TXT",
+                        label="⬇️ Download TXT" if output_language == "English" else "⬇️ Скачать TXT",
                         data=result.encode("utf-8"),
                         file_name=filename_txt,
                         mime="text/plain",
