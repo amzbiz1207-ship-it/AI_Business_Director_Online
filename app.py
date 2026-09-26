@@ -869,6 +869,11 @@ if not api_key:
 
 st.subheader("1. Заполните анкету бизнеса")
 
+output_language = st.selectbox(
+    "Язык интерфейса / Interface language",
+    ["Русский", "English"],
+    index=0,
+)
 with st.form("business_form"):
     service_name = st.text_input(
         "Название сервиса / бренда для PDF",
@@ -877,11 +882,8 @@ with st.form("business_form"):
     )
 
     st.caption("Это название появится в PDF в строке «Подготовлено с помощью ...».")
-    output_language = st.selectbox(
-        "Язык результата / Output language",
-        ["Русский", "English"],
-        index=0,
-    )
+    
+    
     labels = {
         "business_name": "Business name" if output_language == "English" else "Название бизнеса",
         "business_name_ph": "Example: beauty salon, coffee shop, or toy store" if output_language == "English" else "Например: салон красоты, кофейня или магазин игрушек",
